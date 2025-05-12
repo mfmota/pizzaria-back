@@ -19,19 +19,43 @@ class CreateProductController{
         if(!req.files || Object.keys(req.files).length === 0 ){
             throw new Error("Erro ao carregar a foto")
         }else{
+            let fileToUpload: UploadedFile;
+            const uploadedFileOrFiles = req.files.file; // Melhor usar req.files.file se 'file' for um nome de campo válido
 
-            const file: UploadedFile = req.files['file']
+            if (Array.isArray(uploadedFileOrFiles)) {
+                // Se for um array, pegamos o primeiro arquivo.
+                // Adicione lógica aqui se você quiser proibir múltiplos arquivos ou tratar de forma diferente.
+                if (uploadedFileOrFiles.length === 0) {
+                    throw new Error("Erro ao carregar a foto: array de arquivos vazio.");
+                }
+                fileToUpload = uploadedFileOrFiles[0];
+            } else {
+                // Se não for um array, é um único UploadedFile
+                fileToUpload = uploadedFileOrFiles;
+            }
+            // --- FIM DA CORREÇÃO ---
 
-            const resultFile: UploadApiResponse = await new Promise((resolve,reject) => {
-                v2.uploader.upload_stream({}, function(error,result){
-                    if(error){
-                        reject(error);
-                        return;
+            // Verifica se fileToUpload tem a propriedade 'data', essencial para o stream
+            if (!fileToUpload || !fileToUpload.data) {
+                throw new Error("Erro ao carregar a foto: arquivo inválido ou sem dados.");
+            }
+                
+
+            const resultFile: UploadApiResponse = await new Promise((resolve, reject) => {
+            const uploadStream = v2.uploader.upload_stream({ resource_type: 'image' }, // Adicione resource_type se souber
+                (error, result) => {
+                    if (error) {
+                        return reject(error);
                     }
-
-                    resolve(result)
-                }).end(file.data)
-            })
+                    if (result) { // Verifique se result não é undefined
+                        resolve(result);
+                    } else {
+                        reject(new Error("Cloudinary upload failed: No result returned."));
+                    }
+                }
+            );
+            uploadStream.end(fileToUpload.data); // Usa a variável corrigida
+        });
 
             const product = await createProductService.execute({
                 name,
