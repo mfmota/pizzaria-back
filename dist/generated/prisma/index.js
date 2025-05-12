@@ -184,6 +184,10 @@ const config = {
         "fromEnvVar": null,
         "value": "windows",
         "native": true
+      },
+      {
+        "fromEnvVar": null,
+        "value": "rhel-openssl-3.0.x"
       }
     ],
     "previewFeatures": [],
@@ -210,8 +214,8 @@ const config = {
       }
     }
   },
-  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"../src/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\n//migration -> npm prisma migrate dev\nmodel User {\n  id         String    @id @default(uuid())\n  name       String\n  email      String\n  password   String\n  created_at DateTime? @default(now())\n  updated_at DateTime? @default(now())\n\n  @@map(\"users\")\n}\n\nmodel Category {\n  id         String    @id @default(uuid())\n  name       String\n  created_at DateTime? @default(now())\n  updated_at DateTime? @default(now())\n  products   Product[]\n\n  @@map(\"categories\")\n}\n\nmodel Product {\n  id          String    @id @default(uuid())\n  name        String\n  price       String\n  description String\n  banner      String\n  created_at  DateTime? @default(now())\n  updated_at  DateTime? @default(now())\n\n  category    Category @relation(fields: [category_id], references: [id])\n  category_id String\n  items       Item[]\n\n  @@map(\"products\")\n}\n\nmodel Order {\n  id         String    @id @default(uuid())\n  table      Int\n  status     Boolean   @default(false)\n  draft      Boolean   @default(true)\n  name       String?\n  created_at DateTime? @default(now())\n  updated_at DateTime? @default(now())\n\n  items Item[]\n\n  @@map(\"orders\")\n}\n\nmodel Item {\n  id         String    @id @default(uuid())\n  amount     Int\n  created_at DateTime? @default(now())\n  updated_at DateTime? @default(now())\n\n  order      Order   @relation(fields: [order_id], references: [id])\n  product    Product @relation(fields: [product_id], references: [id])\n  order_id   String\n  product_id String\n\n  @@map(\"items\")\n}\n",
-  "inlineSchemaHash": "2c2efc23238399d6bded4c9b87485dc7b579db94babae1d1a9eaf430ab8cf24d",
+  "inlineSchema": "generator client {\n  provider      = \"prisma-client-js\"\n  binaryTargets = [\"native\", \"rhel-openssl-3.0.x\"]\n  output        = \"../src/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\n//migration -> npm prisma migrate dev\nmodel User {\n  id         String    @id @default(uuid())\n  name       String\n  email      String\n  password   String\n  created_at DateTime? @default(now())\n  updated_at DateTime? @default(now())\n\n  @@map(\"users\")\n}\n\nmodel Category {\n  id         String    @id @default(uuid())\n  name       String\n  created_at DateTime? @default(now())\n  updated_at DateTime? @default(now())\n  products   Product[]\n\n  @@map(\"categories\")\n}\n\nmodel Product {\n  id          String    @id @default(uuid())\n  name        String\n  price       String\n  description String\n  banner      String\n  created_at  DateTime? @default(now())\n  updated_at  DateTime? @default(now())\n\n  category    Category @relation(fields: [category_id], references: [id])\n  category_id String\n  items       Item[]\n\n  @@map(\"products\")\n}\n\nmodel Order {\n  id         String    @id @default(uuid())\n  table      Int\n  status     Boolean   @default(false)\n  draft      Boolean   @default(true)\n  name       String?\n  created_at DateTime? @default(now())\n  updated_at DateTime? @default(now())\n\n  items Item[]\n\n  @@map(\"orders\")\n}\n\nmodel Item {\n  id         String    @id @default(uuid())\n  amount     Int\n  created_at DateTime? @default(now())\n  updated_at DateTime? @default(now())\n\n  order      Order   @relation(fields: [order_id], references: [id])\n  product    Product @relation(fields: [product_id], references: [id])\n  order_id   String\n  product_id String\n\n  @@map(\"items\")\n}\n",
+  "inlineSchemaHash": "a0f7e605794841c89b26f79c8d56540e2b6f200132716ef91bd79d9c43fe6bdd",
   "copyEngine": true
 }
 
@@ -252,6 +256,10 @@ Object.assign(exports, Prisma)
 // file annotations for bundling tools to include these files
 path.join(__dirname, "query_engine-windows.dll.node");
 path.join(process.cwd(), "src/generated/prisma/query_engine-windows.dll.node")
+
+// file annotations for bundling tools to include these files
+path.join(__dirname, "libquery_engine-rhel-openssl-3.0.x.so.node");
+path.join(process.cwd(), "src/generated/prisma/libquery_engine-rhel-openssl-3.0.x.so.node")
 // file annotations for bundling tools to include these files
 path.join(__dirname, "schema.prisma");
 path.join(process.cwd(), "src/generated/prisma/schema.prisma")
