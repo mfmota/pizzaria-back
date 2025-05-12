@@ -2,7 +2,6 @@ import express,{Response,Request,NextFunction} from 'express'
 import 'express-async-errors';
 import cors from 'cors'
 import { router } from './route'
-import path from 'path'
 import fileUpload from 'express-fileupload';
 
 const app = express();
@@ -14,11 +13,6 @@ app.use(fileUpload({
 }))
 
 app.use(router);
-
-app.use(
-    '/files',
-    express.static(path.resolve(__dirname,'..','tmp'))
-)
 
 app.use((err:Error, req:Request, res:Response, next:NextFunction)=>{
     if(err instanceof Error){
